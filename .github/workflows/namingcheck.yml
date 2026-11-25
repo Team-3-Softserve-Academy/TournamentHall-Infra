@@ -1,0 +1,17 @@
+name: "Check PR Titles"
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+
+jobs:
+  validate-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        run: |
+          if [[ ! "${{ github.event.pull_request.title }}" =~ ^ROOT-[0-9]+\ [^[:space:]].* ]]; then
+            echo "::error ::PR title must follow format: ROOT-123 Your title"
+            exit 1
+          fi
