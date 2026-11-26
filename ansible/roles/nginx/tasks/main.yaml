@@ -1,0 +1,21 @@
+- name: install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: deploy nginx configuration
+  ansible.builtin.template:
+    src: nginx_conf.j2
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+   - restart nginx
+
+- name: ensure nginx is running
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: yes
+
