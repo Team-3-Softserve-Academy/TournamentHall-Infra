@@ -1,0 +1,6 @@
+postgres_app_db: tournament_db
+postgres_app_db_user: postgresql
+postgres_listen_address: "*"
+postgres_app_db_password: postgresql
+postgres_app_server_ips:
+- 192.168.56.4/32
