@@ -1,0 +1,12 @@
+upstream tournament {
+    server 192.168.56.3:{{ nginx_forward_port }};
+    server 192.168.56.4:{{ nginx_forward_port }};
+}
+
+server {
+    listen {{ nginx_listen_port }};
+
+    location / {
+        proxy_pass http://tournament;
+    }
+}
