@@ -12,11 +12,8 @@
 ```
 [Jira Link] < put jira link here >
 
-## What's new?
--
-
-## Screenshots 
--
-
 ## How to test
+-
+
+## Additional information
 -
