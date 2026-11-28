@@ -2,4 +2,10 @@
   become: true
   hosts: web
   roles:
-    - nginx
+  - nginx
+
+- name: setup database server
+  become: true
+  hosts: database
+  roles:
+    - postgres

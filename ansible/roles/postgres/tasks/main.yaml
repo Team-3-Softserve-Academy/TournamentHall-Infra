@@ -1,0 +1,87 @@
+- name: install postgres and python dependencies
+  ansible.builtin.apt:
+    name: postgresql, python3-psycopg2
+    state: present
+    update_cache: true
+
+- name: ensure postgres is running
+  ansible.builtin.systemd:
+    name: postgresql
+    enabled: true
+    state: started
+  
+- name: configure postges listen address
+  become_user: postgres
+  community.postgresql.postgresql_alter_system:
+    param: listen_addresses
+    value: '*'
+  notify:
+  - restart postgres
+
+- name: configure postges listen port
+  ansible.builtin.lineinfile: 
+    dest=/etc/postgresql/18/main/postgresql.conf
+    regexp="port =" 
+    line="port = {{ postgres_listen_port }}"
+    state=present
+  notify: 
+    - restart postgres
+
+- name: restart postgres
+  ansible.builtin.meta: flush_handlers
+
+- name: create application database
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ postgres_app_db }}"
+    state: present
+
+- name: create application user
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    login_db: "{{ postgres_app_db }}"
+    name: "{{ postgres_app_db_user }}"
+    password: "{{ postgres_app_db_password }}"
+    state: present
+
+- name: grant application user public scema usage
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    login_db: "{{ postgres_app_db }}"
+    type: schema
+    objs: public
+    privs: ALL
+    role: "{{ postgres_app_db_user }}"
+    state: present
+
+- name: configure application user database privileges
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    login_db: "{{ postgres_app_db }}"
+    type: database
+    privs: ALL
+    role: "{{ postgres_app_db_user }}"
+    state: present
+
+- name: allow local connection as application user
+  become_user: postgres
+  community.postgresql.postgresql_pg_hba:
+    dest: /etc/postgresql/18/main/pg_hba.conf
+    contype: local
+    users: "{{ postgres_app_db_user }}"
+    method: "scram-sha-256"
+  notify: 
+    - restart postgres
+
+- name: allow application servers to connect to the database
+  become_user: postgres
+  community.postgresql.postgresql_pg_hba:
+    dest: /etc/postgresql/18/main/pg_hba.conf
+    contype: host
+    address: "{{ item }}"
+    databases: "{{ postgres_app_db }}"
+    users: "{{ postgres_app_db_user }}"
+    method: "scram-sha-256"
+  loop: "{{ postgres_app_server_ips }}"
+  notify: 
+    - restart postgres
