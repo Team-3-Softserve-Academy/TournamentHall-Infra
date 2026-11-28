@@ -1,0 +1,24 @@
+#cloud-config
+
+autoinstall:
+    version: 1
+    
+    source:
+        id: ubuntu-server-minimal
+
+    identity:
+        hostname: golden-image
+        username: base
+        password: $1$K85TfgwM$6MCbdPmsJaMDRgKqY7SPH1
+
+    ssh:
+        install-server: yes
+        authorized-keys:
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHYlbUjD9x7TtrHuNDzMAKNniUrnW2IPIZn7kHOPyYxr denys@denys-ASUS-TUF-Gaming-F15-FX506LHB-FX506LHB
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA6k1EaKBgtaB4Chuj2w63YFEAlPa54rsLi2VRdCkpK/ user@DESKTOP-VG5N1OB
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMHK2IA1qEYcQpaOXsOzuBautaBGhCn4wuZoKKkaevxP spiva@Lenovo_Ideapad
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILE12IpY8TQRFca4MMEu0U660R3+IcdM3WA/exitC/Tw damnd@harmyder
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILi3umeOb4j6l0ZKB7Mm5xTIRfwT00Z/QudzR2zuVJYD roleksa404@gmail.com
+        allow-pw: no
+
+    updates: security
