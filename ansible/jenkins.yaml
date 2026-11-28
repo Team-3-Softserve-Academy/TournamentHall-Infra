@@ -1,6 +1,6 @@
 - name: setup jenkins server
   become: true
-  hosts: control
+  hosts: jenkins
   tasks:
     - name: install java and git
       ansible.builtin.apt:
